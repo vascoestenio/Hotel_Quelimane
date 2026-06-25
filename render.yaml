@@ -2,5 +2,6 @@ services:
   - type: web
     name: hotel-quelimane
     env: java
-    buildCommand: ./mvnw clean package
+    runtime: java
+    buildCommand: chmod +x mvnw && ./mvnw clean package
     startCommand: java -jar target/Hotel_Quelimane-0.0.1-SNAPSHOT.jar
