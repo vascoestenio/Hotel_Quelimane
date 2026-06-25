@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Recibo de Pagamento</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Segoe UI',sans-serif;
+
+    min-height:100vh;
+
+    padding:30px;
+
+    background:
+    linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.75)),
+    url('https://images.unsplash.com/photo-1566073771259-6a8506099945');
+
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+
+.recibo{
+
+    max-width:800px;
+
+    margin:auto;
+
+    background:rgba(255,255,255,.95);
+
+    border-radius:25px;
+
+    padding:35px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 20px 50px rgba(0,0,0,.5);
+
+    animation:entrada 1s ease;
+}
+
+.recibo::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-50%;
+    left:-50%;
+
+    width:200%;
+    height:200%;
+
+    background:
+    radial-gradient(circle,
+    rgba(255,215,0,.05),
+    transparent 70%);
+
+    animation:girar 18s linear infinite;
+}
+
+@keyframes girar{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+@keyframes entrada{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+h2{
+
+    text-align:center;
+
+    color:#1c2331;
+
+    margin-bottom:20px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+h2 i{
+
+    color:#FFD700;
+
+    margin-right:10px;
+
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+    0%{transform:scale(1);}
+    50%{transform:scale(1.15);}
+    100%{transform:scale(1);}
+}
+
+hr{
+    margin-bottom:20px;
+}
+
+.linha{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:12px;
+
+    margin:8px 0;
+
+    border-radius:10px;
+
+    background:#f8f9fa;
+
+    transition:.3s;
+
+    position:relative;
+    z-index:2;
+}
+
+.linha:hover{
+
+    background:#fff8dc;
+
+    transform:translateX(5px);
+}
+
+.label{
+
+    font-weight:bold;
+
+    color:#212529;
+}
+
+.botoes{
+
+    margin-top:30px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    position:relative;
+    z-index:2;
+}
+
+.btn{
+
+    padding:12px 25px;
+
+    border-radius:30px;
+
+    text-decoration:none;
+
+    color:white;
+
+    font-weight:bold;
+
+    transition:.4s;
+}
+
+.btn:hover{
+
+    transform:translateY(-4px) scale(1.05);
+}
+
+.pdf{
+
+    background:linear-gradient(45deg,#198754,#28a745);
+}
+
+.voltar{
+
+    background:linear-gradient(45deg,#6c757d,#495057);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="recibo">
+
+<h2>
+<i class="fas fa-file-invoice-dollar"></i>
+RECIBO DE PAGAMENTO
+</h2>
+
+<hr>
+
+<div class="linha">
+<span class="label">ID:</span>
+<span th:text="${recibo.id}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Número:</span>
+<span th:text="${recibo.numeroRecibo}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Reserva:</span>
+<span th:text="${recibo.reserva.id}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Cliente:</span>
+<span th:text="${recibo.reserva.cliente.nome}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Quarto:</span>
+<span th:text="${recibo.reserva.quarto.numero}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Valor Total:</span>
+<span th:text="${recibo.valorTotal}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Valor Pago:</span>
+<span th:text="${recibo.valorPago}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Método:</span>
+<span th:text="${recibo.metodoPagamento}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Status:</span>
+<span th:text="${recibo.status}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Data Pagamento:</span>
+<span th:text="${recibo.dataPagamento}"></span>
+</div>
+
+<div class="linha">
+<span class="label">Data Emissão:</span>
+<span th:text="${recibo.dataEmissao}"></span>
+</div>
+
+<div class="botoes">
+
+<a class="btn pdf"
+th:href="@{/recibos/pdf/{id}(id=${recibo.id})}">
+<i class="fas fa-file-pdf"></i>
+Imprimir PDF
+</a>
+
+<a class="btn voltar"
+th:href="@{/dashboard}">
+<i class="fas fa-arrow-left"></i>
+Voltar
+</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

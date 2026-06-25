@@ -1,0 +1,372 @@
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Gestão de Pagamentos</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(rgba(0,0,0,.78),rgba(0,0,0,.78)),
+    url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa');
+
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+
+.area{
+
+    margin-top:35px;
+    margin-bottom:35px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    border-radius:30px;
+
+    padding:35px;
+
+    box-shadow:
+    0 20px 50px rgba(0,0,0,.5);
+
+    animation:fadeIn .8s ease;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.titulo{
+
+    text-align:center;
+
+    color:white;
+
+    margin-bottom:30px;
+}
+
+.titulo i{
+
+    font-size:60px;
+
+    color:#FFD700;
+
+    margin-bottom:10px;
+
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.15);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+.titulo h2{
+
+    font-weight:700;
+
+    margin-top:10px;
+
+    letter-spacing:1px;
+}
+
+.titulo p{
+
+    color:#FFD700;
+
+    font-size:15px;
+
+    margin-top:8px;
+}
+
+.table{
+
+    background:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    margin-top:15px;
+}
+
+.table thead{
+
+    background:#1c2331;
+
+    color:white;
+}
+
+.table tbody tr{
+
+    transition:.3s;
+}
+
+.table tbody tr:hover{
+
+    background:#fff9db;
+
+    transform:scale(1.01);
+}
+
+.btn{
+
+    border-radius:25px;
+
+    transition:.3s;
+
+    font-weight:500;
+}
+
+.btn:hover{
+
+    transform:translateY(-3px);
+}
+
+.btn-success{
+
+    box-shadow:0 5px 15px rgba(25,135,84,.25);
+}
+
+.btn-warning{
+
+    box-shadow:0 5px 15px rgba(255,193,7,.25);
+}
+
+.btn-danger{
+
+    box-shadow:0 5px 15px rgba(220,53,69,.25);
+}
+
+.btn-primary{
+
+    box-shadow:0 5px 15px rgba(13,110,253,.25);
+}
+
+.top-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:20px;
+}
+
+.info-box{
+
+    background:rgba(255,215,0,.12);
+
+    border:1px solid rgba(255,215,0,.25);
+
+    color:#FFD700;
+
+    border-radius:15px;
+
+    padding:12px;
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+    font-weight:600;
+}
+
+.footer-premium{
+
+    text-align:center;
+
+    color:white;
+
+    margin-top:20px;
+
+    font-size:14px;
+}
+
+.footer-premium i{
+
+    color:#FFD700;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="area">
+
+<div class="titulo">
+
+<i class="fas fa-money-check-dollar"></i>
+
+<h2>Gestão de Pagamentos</h2>
+
+<p>HOTEL DE QUELIMANE • SISTEMA PREMIUM 5 ESTRELAS</p>
+
+</div>
+
+<div class="info-box">
+
+<i class="fas fa-chart-line"></i>
+
+Total de Pagamentos:
+<b th:text="${#lists.size(pagamentos)}"></b>
+
+</div>
+
+<div class="top-buttons">
+
+<a th:href="@{/dashboard}"
+class="btn btn-secondary">
+
+<i class="fas fa-home"></i>
+Voltar
+</a>
+
+<a th:href="@{/pagamentos/novo}"
+class="btn btn-success">
+
+<i class="fas fa-plus"></i>
+Novo Pagamento
+</a>
+
+</div>
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-hover">
+
+<thead>
+
+<tr>
+<th>ID</th>
+<th>Reserva</th>
+<th>Cliente</th>
+<th>Quarto</th>
+<th>Valor</th>
+<th>Método</th>
+<th>Data</th>
+<th>Ações</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr th:each="pagamento : ${pagamentos}">
+
+<td th:text="${pagamento.id}"></td>
+
+<td th:text="${pagamento.reserva != null ? pagamento.reserva.id : 'N/A'}"></td>
+
+<td th:text="${pagamento.reserva != null && pagamento.reserva.cliente != null ? pagamento.reserva.cliente.nome : 'N/A'}"></td>
+
+<td th:text="${pagamento.reserva != null && pagamento.reserva.quarto != null ? pagamento.reserva.quarto.numero : 'N/A'}"></td>
+
+<td th:text="${pagamento.valor}"></td>
+
+<td th:text="${pagamento.metodo}"></td>
+
+<td th:text="${pagamento.dataPagamento}"></td>
+
+<td>
+
+<a th:href="@{/pagamentos/editar/{id}(id=${pagamento.id})}"
+class="btn btn-warning btn-sm">
+
+<i class="fas fa-edit"></i>
+Editar
+
+</a>
+
+<a th:href="@{/pagamentos/eliminar/{id}(id=${pagamento.id})}"
+class="btn btn-danger btn-sm"
+onclick="return confirm('Eliminar pagamento?')">
+
+<i class="fas fa-trash"></i>
+Eliminar
+
+</a>
+
+<a th:href="@{/recibos/pdf/{id}(id=${pagamento.id})}"
+class="btn btn-primary btn-sm">
+
+<i class="fas fa-file-pdf"></i>
+PDF
+
+</a>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="footer-premium">
+
+<i class="fas fa-hotel"></i>
+
+Sistema de Gestão Hoteleira 05 Estrela • Hotel Quelimane
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
+```

@@ -1,0 +1,192 @@
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Formulário de Quartos</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:
+linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b');
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+.card{
+
+width:700px;
+
+background:rgba(255,255,255,.12);
+
+backdrop-filter:blur(15px);
+
+padding:35px;
+
+border-radius:25px;
+
+box-shadow:0 15px 40px rgba(0,0,0,.4);
+
+animation:fadeUp 1s ease;
+}
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(50px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+h2{
+text-align:center;
+color:white;
+margin-bottom:25px;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+font-weight:bold;
+color:white;
+}
+
+input,
+select{
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:15px;
+}
+
+input:focus,
+select:focus{
+
+outline:none;
+
+box-shadow:0 0 15px gold;
+}
+
+.botoes{
+margin-top:25px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:30px;
+
+text-decoration:none;
+
+font-weight:bold;
+
+cursor:pointer;
+}
+
+.salvar{
+background:#198754;
+color:white;
+}
+
+.dashboard{
+background:#343a40;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 th:text="${quarto.id == null} ? 'Novo Quarto' : 'Editar Quarto'"></h2>
+
+<form th:action="@{/quartos/salvar}" th:object="${quarto}" method="post">
+
+<input type="hidden" th:field="*{id}" />
+
+<label>Número do Quarto</label>
+<input type="number" th:field="*{numero}" required />
+
+<label>Tipo</label>
+<select th:field="*{tipo}" required>
+<option value="">-- Selecionar --</option>
+<option value="Normal">Normal</option>
+<option value="Suite">Suite</option>
+<option value="Solteiro">Solteiro</option>
+</select>
+
+<label>Preço por Noite</label>
+<input type="number" step="0.01" th:field="*{precoNoite}" required />
+
+<label>Estado</label>
+<select th:field="*{estado}" required>
+<option value="">-- Selecionar --</option>
+<option value="DISPONIVEL">DISPONIVEL</option>
+<option value="RESERVADO">RESERVADO</option>
+</select>
+
+<div class="botoes">
+
+<button type="submit" class="btn salvar">
+<i class="fas fa-save"></i>
+Guardar
+</button>
+
+<a th:href="@{/dashboard}" class="btn dashboard">
+<i class="fas fa-home"></i>
+Dashboard
+</a>
+
+</div>
+
+</form>
+
+</div>
+
+</body>
+</html>
+```
