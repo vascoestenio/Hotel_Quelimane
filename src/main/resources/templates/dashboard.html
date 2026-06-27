@@ -9,264 +9,195 @@
 <title>Dashboard - Hotel Engenheiros</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
+/* ===== BASE ===== */
 body{
     margin:0;
-    padding:0;
-    min-height:100vh;
-    background-image:url('/imagens/hotel.jpg');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
     font-family:Arial;
+    background:#f4f6f9;
 }
 
-/* camada escura */
-.overlay{
-    min-height:100vh;
-    background:rgba(0,0,0,0.65);
+/* ===== LAYOUT ===== */
+.dashboard{
     display:flex;
-    flex-direction:column;
+    min-height:100vh;
 }
 
-/* topo */
-.navbar{
-    background:rgba(0,0,0,0.85);
-}
-
-.navbar-brand{
-    color:white;
-    font-weight:bold;
-}
-
-/* centro */
-.hero{
+/* ===== CONTEÚDO PRINCIPAL ===== */
+.main{
     flex:1;
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
+}
+
+/* ===== HEADER ===== */
+.header{
+    background:#111;
     color:white;
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.hero h1{
-    font-size:55px;
-    font-weight:bold;
-    text-shadow:3px 3px 10px black;
-}
-
-.hero p{
+.header h2{
+    margin:0;
     font-size:20px;
 }
 
-/* botões módulos */
-.modules{
-    margin-top:30px;
+/* botão voltar */
+.btn-voltar-login{
+    padding:8px 15px;
+    background:#dc3545;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
 }
 
-.modules a{
-    margin:10px;
-    padding:12px 25px;
-    font-size:18px;
+/* ===== CONTEÚDO ===== */
+.content{
+    padding:20px;
+}
+
+/* ===== CHARTS ===== */
+.charts{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:20px;
+}
+
+canvas{
+    background:white;
+    padding:10px;
     border-radius:10px;
-    text-decoration:none;
-    display:inline-block;
+}
+
+/* ===== SIDEBAR DIREITA ===== */
+.sidebar{
+    width:260px;
+    background:#1a1a1a;
     color:white;
-    font-weight:bold;
+    display:flex;
+    flex-direction:column;
+    padding:20px;
+    gap:10px;
+}
+
+.sidebar h3{
+    margin-bottom:10px;
+    font-size:18px;
+}
+
+.sidebar a{
+    color:white;
+    text-decoration:none;
+    padding:10px;
+    background:#2c2c2c;
+    border-radius:8px;
     transition:0.3s;
 }
 
-.modules a:hover{
-    transform:scale(1.05);
+.sidebar a:hover{
+    background:#0d6efd;
 }
 
-.clientes{background:#0d6efd;}
-.quartos{background:#198754;}
-.reservas{background:#ffc107; color:black;}
-.pagamentos{background:#dc3545;}
-.recibos{background:#6610f2;}
-
-/* NOVO BOTÃO RELATÓRIO FINANCEIRO */
-.relatorio{background:#20c997;}
-
-.footer{
-    text-align:center;
-    color:white;
-    padding:15px;
-    background:rgba(0,0,0,0.7);
-}
-
-/* contactos */
-.contactos{
-    margin-top:20px;
-    font-size:16px;
+/* permissões */
+.admin-only{
+    margin-top:10px;
 }
 
 </style>
-<style>
-.btn-voltar-login {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    padding: 12px 18px;
-    background: linear-gradient(135deg, #dc3545, #b02a37);
-    color: white;
-    border: none;
-    border-radius: 10px;
-
-    font-weight: 600;
-    text-decoration: none;
-
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-voltar-login i {
-    transition: transform 0.3s ease;
-}
-
-/* hover animação */
-.btn-voltar-login:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    background: linear-gradient(135deg, #ff4d5a, #c82333);
-}
-
-.btn-voltar-login:hover i {
-    transform: translateX(-5px);
-}
-
-/* efeito de brilho */
-.btn-voltar-login::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.2);
-    transform: skewX(-25deg);
-    transition: 0.5s;
-}
-
-.btn-voltar-login:hover::before {
-    left: 120%;
-}
-</style>
-
-<a href="/login" class="btn-voltar-login">
-    <i class="fas fa-arrow-left"></i>
-       Voltar
-</a>
-
 </head>
 
 <body>
 
-<div class="overlay">
+<div class="dashboard">
 
-	<nav class="navbar navbar-dark px-4 d-flex justify-content-between">
+    <!-- ================= SIDEBAR DIREITA ================= -->
+    <aside class="sidebar">
 
-	    <span class="navbar-brand">
-	        HOTEL ENGENHEIROS
-	    </span>
+        <h3>Menu</h3>
 
-	    <div sec:authorize="hasRole('ADMIN')">
-	        <a th:href="@{/usuarios}"
-	           class="btn btn-warning">
-	            Utilizadores
-	        </a>
-	    </div>
+        <a th:href="@{/clientes}">Clientes</a>
+        <a th:href="@{/quartos}">Quartos</a>
+        <a th:href="@{/reservas}">Reservas</a>
+        <a th:href="@{/pagamentos}">Pagamentos</a>
+        <a th:href="@{/recibos}">Recibos</a>
 
-	</nav>
-
-    <!-- HERO -->
-    <div class="hero">
-
-        <h1>HOTEL ENGENHEIROS</h1>
-
-        <p>ESTENIO • JOSE • ORISVALDO</p>
-
-        <p>Sistema de Gestão Hoteleira</p>
-
-        <!-- CONTACTOS -->
-        <div class="contactos">
-            📞 864629657 / 868999752 / 844705514 <br>
-            ✉️ vascoestenio@gmail.com
+        <div class="admin-only" sec:authorize="hasAnyRole('ADMIN','GERENTE')">
+            <a th:href="@{/relatorios/financeiro}">
+                Relatório Financeiro
+            </a>
         </div>
 
-		<!-- BOTÕES MÓDULOS -->
-		<div class="modules">
+        <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/usuarios}" style="background:#ffc107;color:black;">
+                Utilizadores
+            </a>
+        </div>
 
-		    <a th:href="@{/clientes}" class="clientes">Clientes</a>
+    </aside>
 
-		    <a th:href="@{/quartos}" class="quartos">Quartos</a>
+    <!-- ================= CONTEÚDO PRINCIPAL ================= -->
+    <div class="main">
 
-		    <a th:href="@{/reservas}" class="reservas">Reservas</a>
+        <!-- HEADER -->
+        <div class="header">
+            <h2>Hotel Engenheiros - Dashboard</h2>
 
-		    <a th:href="@{/pagamentos}" class="pagamentos">Pagamentos</a>
+            <a href="/login" class="btn-voltar-login">
+                ← Voltar
+            </a>
+        </div>
 
-		    <a th:href="@{/recibos}" class="recibos">Recibo Pagamento</a>
+        <!-- CONTENT -->
+        <div class="content">
 
-		    <!-- RELATÓRIO FINANCEIRO (NOVO) -->
-		    <div sec:authorize="hasAnyRole('ADMIN','GERENTE')">
-		        <a th:href="@{/relatorios/financeiro}" class="relatorio">
-		            Relatório Financeiro
-		        </a>
-		    </div>
+            <h4 class="mb-3">Visão Geral</h4>
 
-		</div>
+            <!-- CHARTS -->
+            <div class="charts">
 
-    </div>
+                <canvas id="metodoChart"></canvas>
+                <canvas id="clientesChart"></canvas>
+                <canvas id="quartosChart"></canvas>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        © 2026 Hotel Engenheiros - Sistema de Gestão
+            </div>
+
+        </div>
+
     </div>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- ================= CHART JS ================= -->
 <script th:inline="javascript">
 
-/* =========================
-   RECEITA POR MÉTODO
-========================= */
-const metodosLabels = /*[[${metodos}]]*/ [];
-const metodoNome = metodosLabels.map(m => m[0]);
-const metodoValor = metodosLabels.map(m => m[1]);
+/* ===== MÉTODOS DE PAGAMENTO ===== */
+const metodos = /*[[${metodos}]]*/ [];
+const metodoNome = metodos.map(m => m[0]);
+const metodoValor = metodos.map(m => m[1]);
 
 new Chart(document.getElementById('metodoChart'), {
     type: 'pie',
     data: {
         labels: metodoNome,
         datasets: [{
-            label: 'Métodos de Pagamento',
             data: metodoValor,
-            backgroundColor: [
-                '#20c997',
-                '#0d6efd',
-                '#ffc107',
-                '#dc3545',
-                '#6610f2'
-            ]
+            backgroundColor: ['#20c997','#0d6efd','#ffc107','#dc3545','#6610f2']
         }]
     }
 });
 
 
-/* =========================
-   TOP CLIENTES
-========================= */
-const clientesData = /*[[${clientes}]]*/ [];
-const clientesNome = clientesData.map(c => c[0]);
-const clientesValor = clientesData.map(c => c[1]);
+/* ===== TOP CLIENTES ===== */
+const clientes = /*[[${clientes}]]*/ [];
+const clientesNome = clientes.map(c => c[0]);
+const clientesValor = clientes.map(c => c[1]);
 
 new Chart(document.getElementById('clientesChart'), {
     type: 'bar',
@@ -281,12 +212,10 @@ new Chart(document.getElementById('clientesChart'), {
 });
 
 
-/* =========================
-   QUARTOS MAIS RENTÁVEIS
-========================= */
-const quartosData = /*[[${quartos}]]*/ [];
-const quartosNome = quartosData.map(q => q[0]);
-const quartosValor = quartosData.map(q => q[1]);
+/* ===== QUARTOS ===== */
+const quartos = /*[[${quartos}]]*/ [];
+const quartosNome = quartos.map(q => q[0]);
+const quartosValor = quartos.map(q => q[1]);
 
 new Chart(document.getElementById('quartosChart'), {
     type: 'bar',
@@ -301,5 +230,6 @@ new Chart(document.getElementById('quartosChart'), {
 });
 
 </script>
+
 </body>
 </html>
