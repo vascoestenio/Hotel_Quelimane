@@ -9,6 +9,7 @@
 <title>Dashboard - Hotel Engenheiros</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -26,7 +27,7 @@ body{
     min-height:100vh;
 }
 
-/* ===== CONTEÚDO PRINCIPAL ===== */
+/* ===== MAIN ===== */
 .main{
     flex:1;
     display:flex;
@@ -48,32 +49,12 @@ body{
     font-size:20px;
 }
 
-/* botão voltar */
-.btn-voltar-login{
-    padding:8px 15px;
-    background:#dc3545;
+.menu-toggle{
+    display:none;
+    background:none;
+    border:none;
     color:white;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-/* ===== CONTEÚDO ===== */
-.content{
-    padding:20px;
-}
-
-/* ===== CHARTS ===== */
-.charts{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:20px;
-}
-
-canvas{
-    background:white;
-    padding:10px;
-    border-radius:10px;
+    font-size:22px;
 }
 
 /* ===== SIDEBAR DIREITA ===== */
@@ -89,7 +70,6 @@ canvas{
 
 .sidebar h3{
     margin-bottom:10px;
-    font-size:18px;
 }
 
 .sidebar a{
@@ -99,15 +79,96 @@ canvas{
     background:#2c2c2c;
     border-radius:8px;
     transition:0.3s;
+    display:flex;
+    gap:10px;
+    align-items:center;
 }
 
 .sidebar a:hover{
     background:#0d6efd;
 }
 
-/* permissões */
-.admin-only{
+/* ===== CONTENT ===== */
+.content{
+    padding:20px;
+}
+
+/* ===== KPIS ===== */
+.kpis{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card-kpi{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    text-align:center;
+}
+
+.card-kpi h5{
+    margin:0;
+    color:#666;
+}
+
+.card-kpi h2{
     margin-top:10px;
+    color:#0d6efd;
+}
+
+/* ===== CHARTS ===== */
+.charts{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:20px;
+}
+
+canvas{
+    background:white;
+    padding:10px;
+    border-radius:10px;
+}
+
+/* ===== BOTÃO VOLTAR ===== */
+.btn-voltar-login{
+    padding:8px 15px;
+    background:#dc3545;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* ===== RESPONSIVO ===== */
+@media(max-width:768px){
+
+    .charts{
+        grid-template-columns:1fr;
+    }
+
+    .kpis{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar{
+        position:fixed;
+        right:-260px;
+        top:0;
+        height:100%;
+        transition:0.3s;
+        z-index:999;
+    }
+
+    .sidebar.active{
+        right:0;
+    }
+
+    .menu-toggle{
+        display:block;
+    }
 }
 
 </style>
@@ -117,49 +178,46 @@ canvas{
 
 <div class="dashboard">
 
-    <!-- ================= SIDEBAR DIREITA ================= -->
-    <aside class="sidebar">
-
-        <h3>Menu</h3>
-
-        <a th:href="@{/clientes}">Clientes</a>
-        <a th:href="@{/quartos}">Quartos</a>
-        <a th:href="@{/reservas}">Reservas</a>
-        <a th:href="@{/pagamentos}">Pagamentos</a>
-        <a th:href="@{/recibos}">Recibos</a>
-
-        <div class="admin-only" sec:authorize="hasAnyRole('ADMIN','GERENTE')">
-            <a th:href="@{/relatorios/financeiro}">
-                Relatório Financeiro
-            </a>
-        </div>
-
-        <div sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/usuarios}" style="background:#ffc107;color:black;">
-                Utilizadores
-            </a>
-        </div>
-
-    </aside>
-
-    <!-- ================= CONTEÚDO PRINCIPAL ================= -->
+    <!-- ================= MAIN ================= -->
     <div class="main">
 
         <!-- HEADER -->
         <div class="header">
+
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
             <h2>Hotel Engenheiros - Dashboard</h2>
 
             <a href="/login" class="btn-voltar-login">
                 ← Voltar
             </a>
+
         </div>
 
         <!-- CONTENT -->
         <div class="content">
 
-            <h4 class="mb-3">Visão Geral</h4>
+            <!-- ================= KPI ================= -->
+            <div class="kpis">
 
-            <!-- CHARTS -->
+                <div class="card-kpi">
+                    <h5>Clientes</h5>
+                    <h2 th:text="${totalClientes}">0</h2>
+                </div>
+
+                <div class="card-kpi">
+                    <h5>Reservas</h5>
+                    <h2 th:text="${totalReservas}">0</h2>
+                </div>
+
+                <div class="card-kpi">
+                    <h5>Receita</h5>
+                    <h2 th:text="${receitaTotal}">0</h2>
+                </div>
+
+            </div>
+
+            <!-- ================= CHARTS ================= -->
             <div class="charts">
 
                 <canvas id="metodoChart"></canvas>
@@ -172,12 +230,43 @@ canvas{
 
     </div>
 
+    <!-- ================= SIDEBAR DIREITA ================= -->
+    <aside class="sidebar">
+
+        <h3>Menu</h3>
+
+        <a th:href="@{/clientes}"><i class="fa fa-users"></i> Clientes</a>
+        <a th:href="@{/quartos}"><i class="fa fa-bed"></i> Quartos</a>
+        <a th:href="@{/reservas}"><i class="fa fa-calendar"></i> Reservas</a>
+        <a th:href="@{/pagamentos}"><i class="fa fa-credit-card"></i> Pagamentos</a>
+        <a th:href="@{/recibos}"><i class="fa fa-file"></i> Recibos</a>
+
+        <div sec:authorize="hasAnyRole('ADMIN','GERENTE')">
+            <a th:href="@{/relatorios/financeiro}">
+                <i class="fa fa-chart-line"></i> Relatórios
+            </a>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/usuarios}" style="background:#ffc107;color:black;">
+                <i class="fa fa-user"></i> Utilizadores
+            </a>
+        </div>
+
+    </aside>
+
 </div>
 
-<!-- ================= CHART JS ================= -->
+<!-- ================= JS SIDEBAR ================= -->
+<script>
+function toggleMenu(){
+    document.querySelector('.sidebar').classList.toggle('active');
+}
+</script>
+
+<!-- ================= CHARTS ================= -->
 <script th:inline="javascript">
 
-/* ===== MÉTODOS DE PAGAMENTO ===== */
 const metodos = /*[[${metodos}]]*/ [];
 const metodoNome = metodos.map(m => m[0]);
 const metodoValor = metodos.map(m => m[1]);
@@ -193,8 +282,6 @@ new Chart(document.getElementById('metodoChart'), {
     }
 });
 
-
-/* ===== TOP CLIENTES ===== */
 const clientes = /*[[${clientes}]]*/ [];
 const clientesNome = clientes.map(c => c[0]);
 const clientesValor = clientes.map(c => c[1]);
@@ -204,15 +291,13 @@ new Chart(document.getElementById('clientesChart'), {
     data: {
         labels: clientesNome,
         datasets: [{
-            label: 'Clientes que Mais Gastaram (MT)',
+            label: 'Top Clientes',
             data: clientesValor,
             backgroundColor: '#198754'
         }]
     }
 });
 
-
-/* ===== QUARTOS ===== */
 const quartos = /*[[${quartos}]]*/ [];
 const quartosNome = quartos.map(q => q[0]);
 const quartosValor = quartos.map(q => q[1]);
@@ -222,7 +307,7 @@ new Chart(document.getElementById('quartosChart'), {
     data: {
         labels: quartosNome,
         datasets: [{
-            label: 'Receita por Quarto (MT)',
+            label: 'Quartos',
             data: quartosValor,
             backgroundColor: '#0dcaf0'
         }]
